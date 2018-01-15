@@ -1,3 +1,3 @@
-# web_samples
+# Web samples
 
 Sample code for web applications.
