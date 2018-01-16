@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+
+    <style>
+      html, body {
+        height: 100%;
+      }
+      #div01 {
+        position: absolute;
+        top: 50px;
+        left: 50px;
+        border-color: #000;
+        border-style: solid;
+        border-width: 100px;
+        border-top-width: 0;
+        border-left-width: 60px;
+        border-right-width: 60px;
+        border-top-color: transparent;
+        border-left-color: transparent;
+        border-right-color: transparent;
+        width: 0px;
+        height: 0px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="div01"></div>
+  </body>
+</html>
+<script type="text/javascript">
+  var degrees = 0;
+  var delay = 50;
+
+  function rotate() {
+    if (degrees == 360)
+      degrees = 0;
+
+    var element = document.getElementById('div01');
+
+    if (degrees == 0) {
+      element.style['transform'] = 'none';
+      element.style['-webkit-transform'] = 'none';
+      element.style['-mozilla-transform'] = 'none';
+
+      delay = 200;
+    }
+    else {
+      element.style['transform'] = 'rotateY(' + degrees + 'deg) ' +
+                                   'rotateX(' + degrees + 'deg)';
+      element.style['-webkit-transform'] = 'rotateY(' + degrees + 'deg) ' +
+                                           'rotateX(' + degrees + 'deg)';
+      element.style['-mozilla-transform'] = 'rotateY(' + degrees + 'deg) ' +
+                                            'rotateX(' + degrees + 'deg)';
+
+      delay = 50;
+    }
+
+    degrees += 10;
+
+    setTimeout(function() {
+        rotate();
+    }, delay);
+  }
+
+  rotate();
+</script>

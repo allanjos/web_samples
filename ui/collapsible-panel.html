@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <style>
+      html, body {
+        height: 100%;
+        padding: 0;
+        margin: 0;
+      }
+      table {
+        empty-cells: hide;
+        border-collapse: collapse;
+        border-spacing: 0;
+        border: 0;
+      }
+      tr, td, th {
+        padding: 0;
+        border: 0;
+      }
+      #page {
+        background-color: blue;
+        width: 100%;
+        height: 100%;
+      }
+      #header {
+        background-color: #ccc;
+        border-bottom: #aaa 1px solid;
+      }
+      #menu {
+        background-color: #f1f1f1;
+        width: 150px;
+        height: 100%;
+        padding: 10px;
+        overflow: hidden;
+        border-right: #ccc 1px solid;
+      }
+      #menu-text {
+        display: inline-block;
+        color: #000;
+        width: 150px;
+        padding: 10px;
+        overflow: hidden;
+      }
+      #content {
+        display: table;
+        background-color: #fff;
+        padding: 10px;
+        color: #fff;
+        width: 100%;
+        height: 100%;
+      }
+      #content-text {
+        display: table-cell;
+        height: 100%;
+        width: 100%;
+        padding: 10px;
+      }
+      table.table-body {
+        border: #aaa 1px solid;
+      }
+    </style>
+    <script type="text/javascript">
+      var menuVisible = true;
+      var menuWidth = 0;
+      var menuAnimationHandler = null;
+
+      function stopMenu() {
+        if (menuAnimationHandler)
+          clearTimeout(menuAnimationHandler);
+      }
+
+      function hideMenu() {
+        console.log('hideMenu()');
+
+        stopMenu();
+
+        document.getElementById('btnMenu').innerHTML = 'Show menu';
+
+        menuVisible = false;
+
+        if (menuWidth <= 0) {
+          document.getElementById('col_menu').style.visibility = 'hidden';
+          document.getElementById('col_menu').style.display = 'none';
+
+          return;
+        }
+
+        menuWidth -= 10;
+
+        //alert(menuWidth);
+
+        document.getElementById('menu').style.width = menuWidth + 'px';
+
+        menuAnimationHandler = setTimeout(function() {
+          hideMenu();
+        }, 1);
+      }
+
+      function showMenu() {
+        console.log('showMenu()');
+
+        stopMenu();
+
+        document.getElementById('btnMenu').innerHTML = 'Hide menu';
+
+        menuVisible = true;
+
+        document.getElementById('col_menu').style.visibility = 'visible';
+        document.getElementById('col_menu').style.display = 'table-cell';
+
+        if (menuWidth > 150) {
+          return;
+        }
+
+        menuWidth += 10;
+
+        document.getElementById('menu').style.width = menuWidth + 'px';
+
+        menuAnimationHandler = setTimeout(function() {
+          showMenu();
+        }, 1);
+      }
+
+      function toogleMenu() {
+        menuWidth = document.getElementById('menu').offsetWidth;
+
+        if (menuVisible) {
+          hideMenu();
+        }
+        else {
+          showMenu();
+        }
+      }
+    </script>
+  </head>
+  <body onLoad="hideMenu()">
+    <table class="table-body" width="100%" height="100%">
+      <tr>
+        <td valign="top">
+          <div id="header">
+            <button id="btnMenu" onclick="toogleMenu();">Show Menu</button>
+          </div>
+
+          <table width="100%" height="100%">
+            <tr>
+              <td width="1" valign="top" id="col_menu">
+                <div id="menu">
+                  <div id="menu-text">
+                    Menu item 01<br/>
+                    Menu item 02<br/>
+                    Menu item 03<br/>
+                    Menu item 04<br/>
+                    Menu item 05
+                  </div>
+                </div>
+              </td>
+              <td valign="top">
+                <div id="content">
+                  <div id="content-text">
+                    Test<br/>
+                    Testing 1 2 3...
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </table>
+
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

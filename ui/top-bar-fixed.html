@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <style>
+      html, body {
+        height: 100%;
+      }
+      body {
+        padding: 0;
+        padding-top: 30px;
+        margin: 0;
+      }
+      #topbar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 30px;
+        background-color: #ccc;
+        display: block;
+        width: 100%;
+      }
+    </style>
+
+    <script type="text/javascript">
+      function onScroll() {
+        if (window.pageYOffset > 0)
+          document.getElementById('topbar').style.position = 'fixed';
+        else
+          document.getElementById('topbar').style.position = 'absolute';
+      }
+
+      function onLoad() {
+        var str = "";
+
+        for (var i = 0; i < 300; i++) {
+          str += "Test<br/>";
+        }
+
+        document.getElementsByTagName('body')[0].innerHTML += str;
+
+        window.onscroll = onScroll;
+      }
+    </script>
+  </head>
+  <body onload="onLoad()">
+    <div id="topbar">Fixed bar</div>
+  </body>
+</html>

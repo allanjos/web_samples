@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <style>
+      .menu {
+        border: #ccc 1px solid;
+        display: inline-block;
+        width: 503px;
+      }
+
+      .menu-item {
+        width: 125px;
+        height: 50px;
+        background-color: #f1f1f1;
+        border-left: #ccc 1px solid;
+        float: left;
+      }
+
+      .menu-item:first-child {
+        border-left: 0;
+      }
+
+      .menu-item td {
+        text-align: center;
+        vertical-align: middle;
+        font-size: 20px;
+        font-weight: bold;
+        color: #000;
+        text-shadow: #ccc 1px 1px;
+      }
+
+      .menu-item:hover {
+        background-color: #eee;
+      }
+
+      .menu-item:hover td {
+        color: #000;
+        text-shadow: #ccc 1px 1px;
+      }
+
+      .menu-sub-item {
+        background-color: #f1f1f1;
+        border-bottom: #ccc 1px solid;
+        padding: 10px;
+        color: #444;
+        cursor: pointer;
+      }
+
+      .menu-sub-item * a, .menu-sub-item * a:link, .menu-sub-item * a:visited {
+        text-decoration: none;
+        color: #444;
+      }
+
+      .menu-sub-item * a:hover {
+        text-decoration: none;
+        color: #000;
+      }
+
+      .menu-sub-item:hover {
+        background-color: #fff;
+      }
+
+      .menu-sub-item * {
+        text-shadow: #fff 1px 1px;
+      }
+
+      .menu-clear {
+        width: 0px;
+        height: 0px;
+        clear: both;
+      }
+
+      #menu-popup {
+        position: absolute;
+        width: 200px;
+        /*height: 200px;*/
+        border: 0;
+        padding: 0;
+        background-color: #f1f1f1;
+        border: #ccc 1px solid;
+        visibility: hidden;
+        box-shadow: #ccc 1px 1px 2px;
+      }
+    </style>
+
+    <script type="text/javascript">
+      var Menu = {
+        closePopupHandler: null,
+        menuItemsClassName: '',
+        popupElementId: '',
+        items: null
+      };
+
+      Menu.onMouseOver = function() {
+        //console.log('onmouseover menu item ' + i);
+
+        var x = this.offsetLeft;
+        var y = this.offsetTop;
+        var width = this.offsetWidth;
+        var height = this.offsetHeight;
+
+        Menu.stopCloseMenuTimer();
+
+        // Menu positioning
+
+        document.getElementById(Menu.popupElementId).style.top = (y + height - 1) + 'px';
+        document.getElementById(Menu.popupElementId).style.left = x + 'px';
+
+        // Content
+
+        //console.log('Menu items count: ' + Menu.items.length);
+        //console.log('Menu items count: ' + Menu.items[this.index]);
+
+        if (Menu.items[this.index] && Menu.items[this.index].length > 0) {
+          var src = '';
+
+          if (Menu.items[this.index].length > 1) {
+            for (var itemIndex = 1; itemIndex < Menu.items[this.index].length; itemIndex++) {
+              src += '<div ' +
+                'class="' + Menu.menuSubItemClassName + '" '+
+                'onclick="Menu.popupHide();location.href=\'' +
+                            Menu.items[this.index][itemIndex][1] + '\'">';
+              src += '<table width="100%" height="100%"><tr><td valign="middle">';
+              src += '<a href="' + Menu.items[this.index][itemIndex][1] + '">';
+              src += Menu.items[this.index][itemIndex][0];
+              src += '</a>';
+              src += '</td></tr></table>';
+              src += '</div>';
+            }
+          }
+
+          document.getElementById(Menu.popupElementId).innerHTML = src;
+
+          Menu.popupShow();
+        }
+      };
+
+      Menu.onMouseOut = function() {
+        //console.log('onmouseout menu item');
+
+        Menu.closeMenuTimer();
+      };
+
+      Menu.init = function(container,
+                           items,
+                           menuItemsClassName,
+                           popupElementId,
+                           menuSubItemClassName) {
+        this.menuItemsClassName = menuItemsClassName;
+        this.menuSubItemClassName = menuSubItemClassName;
+        this.popupElementId = popupElementId;
+        this.items = items;
+
+        var src = '';
+
+        if (Menu.items.length > 1) {
+          for (var itemIndex = 0; itemIndex < Menu.items.length; itemIndex++) {
+            //console.log(Menu.items[itemIndex][0][0] + ' = ' + Menu.items[itemIndex][0][1]);
+
+            src += '<div class="menu-item">' +
+                     '<table width="100%" height="100%">' +
+                       '<tr>' +
+                         '<td>' +
+                           Menu.items[itemIndex][0][0] +
+                         '</td>' +
+                       '</tr>' +
+                     '</table>' +
+                   '</div>';
+          }
+
+          src += '<div class="menu-clear"></div>';
+          src += '<div id="' + Menu.popupElementId + '"></div>';
+        }
+
+        container.innerHTML = src;
+
+        for (var i = 0; i < document.getElementsByClassName(this.menuItemsClassName).length; i++) {
+          var menuItemObj = document.getElementsByClassName(this.menuItemsClassName)[i];
+          menuItemObj.index = i;
+
+          menuItemObj.onmouseover = Menu.onMouseOver.bind(menuItemObj);
+
+          menuItemObj.onmouseout = Menu.onMouseOut.bind(menuItemObj);
+
+          document.getElementById(Menu.popupElementId).onmouseover = function() {
+            //console.log('onmouseover menu popup');
+
+            Menu.stopCloseMenuTimer();
+          }
+
+          document.getElementById(Menu.popupElementId).onmouseout = function() {
+            //console.log('onmouseout menu popup');
+
+            Menu.closeMenuTimer();
+          }
+        }
+      };
+
+      Menu.closeMenuTimer = function() {
+        //console.log('Menu.closeMenuTimer');
+
+        this.stopCloseMenuTimer();
+
+        var obj = this;
+
+        this.closePopupHandler = setTimeout(function() {
+            //console.log('Closing menu popup');
+
+            obj.popupHide();
+        }, 500);
+      };
+
+      Menu.stopCloseMenuTimer = function() {
+        //console.log('Menu.stopCloseMenuTimer');
+
+        if (this.closePopupHandler)  {
+          clearTimeout(this.closePopupHandler);
+
+          this.closePopupHandler = null;
+        }
+      };
+
+      Menu.popupShow = function() {
+        document.getElementById(Menu.popupElementId).style.visibility = 'visible';
+
+        document.getElementById(Menu.popupElementId).style.display = 'block';
+      };
+
+      Menu.popupHide = function() {
+        document.getElementById(Menu.popupElementId).style.visibility = 'hidden';
+
+        document.getElementById(Menu.popupElementId).style.display = 'none';
+      };
+    </script>
+  </head>
+  <body>
+    <div id="menu" class="menu"></div>
+  </body>
+</html>
+<script type="text/javascript">
+  var menuItems = [
+    [
+      ['Search', ''],
+      ['Google', 'http://www.google.com'],
+      ['Yahoo!', 'http://www.yahoo.com']
+    ],
+    [
+      ['Papers', ''],
+      ['D24AM', 'http://www.d24am.com'],
+      ['A Crítica', 'http://acritica.uol.com.br']
+    ],
+    [
+      ['Universities', ''],
+      ['UEA', 'http://www.uea.edu.br'],
+      ['UFAM', 'http://www.ufam.edu.br']
+    ],
+    [
+      ['Tech', ''],
+      ['Slashdot', 'http://www.slashdot.com'],
+      ['The Verge', 'http://www.theverge.com']
+    ]
+  ];
+
+  Menu.init(document.getElementById('menu'),
+            menuItems,
+            'menu-item',
+            'menu-popup',
+            'menu-sub-item');
+</script>

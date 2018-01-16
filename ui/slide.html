@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <style>
+      * {
+        padding: 0;
+        border: 0;
+      }
+      html {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        height: 100%;
+      }
+      .table_main {
+        background-color: #f1f1f1;
+        border-spacing: 0;
+        empty-cells: show;
+      }
+      .table_main td {
+        color: #000;
+        vertical-align: top;
+      }
+      .table_main tr > td.first-column {
+        width: 30px;
+        background-color: #000;
+        color: #fff;
+      }
+      #panelSide {
+        position: absolute;
+        top: 0;
+        left: -300px;
+        width: 300px;
+        height: 100%;
+        background-color: green;
+      }
+    </style>
+    <script type="text/javascript">
+      var Slide = {
+        handler: null
+      };
+
+      Slide.stop = function() {
+        if (this.handler) {
+          clearTimeout(this.handler);
+        }
+      };
+
+      Slide.slideIn = function () {
+        this.stop();
+
+        this.runSlideIn();
+      };
+
+      Slide.runSlideIn = function() {
+        console.log('runSlideIn()');
+
+        var left = parseInt(document.getElementById('panelSide').offsetLeft);
+
+        console.log('left = ' + left + ', ' + (left + 300));
+
+        if (left < 0) {
+          left += 20;
+
+          if (left > 0) left = 0;
+
+          document.getElementById('panelSide').style.left = left + 'px';
+
+          this.handler = setTimeout(function() {
+            Slide.runSlideIn();
+          }, 10);
+        }
+      };
+
+      Slide.slideOut = function () {
+        this.stop();
+
+        this.runSlideOut();
+      };
+
+      Slide.runSlideOut = function () {
+        console.log('Slide.slideOut()');
+
+        var left = parseInt(document.getElementById('panelSide').offsetLeft);
+
+        console.log('left = ' + left + ', ' + (left + 300));
+
+        if (left > -300) {
+          left -= 20;
+
+          if (left < -300) left = -300;
+
+          document.getElementById('panelSide').style.left = left + 'px';
+
+          this.handler = setTimeout(function() {
+            Slide.slideOut();
+          }, 10);
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <table class="table_main" width="100%" height="100%">
+      <tr>
+        <td class="first-column" onmouseover="Slide.slideIn();">
+        </td>
+        <td>
+          <b>A slide experiment.</b>
+          <br/><br/>
+          Put the mouse pointer over the black area.
+        </td>
+      </tr>
+    </table>
+    <div id="panelSide" onmouseout="Slide.slideOut();">
+      Slide content. Put the mouse pointer out of this area.
+    </div>
+  </body>
+</html>

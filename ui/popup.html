@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+
+    <style>
+      html, body {
+        margin: 0;
+        height: 100%;
+      }
+
+      .popupmodal {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(204, 204, 204, .5);
+        visibility: hidden;
+      }
+
+      .popupmodal #popupContainer {
+        vertical-align: middle;
+        text-align: center;
+        background-color: #000;
+      }
+    </style>
+
+    <script type="text/javascript">
+      var PopupModal = {
+        element: null,
+        marginSize: 100
+      };
+
+      PopupModal.open = function(width, height) {
+        if (width == undefined) {
+          if (document.clientWidth) {
+            width = document.clientWidth - this.marginSize;
+          }
+          else if (document.documentElement && document.documentElement.clientWidth) {
+            width = document.documentElement.clientWidth - this.marginSize;
+          }
+          else if (window.innerWidth) {
+            width = window.innerWidth - this.marginSize;
+          }
+        }
+
+        if (height == undefined) {
+          if (document.clientHeight) {
+            height = document.clientHeight - this.marginSize;
+          }
+          else if (document.documentElement && document.documentElement.clientHeight) {
+           height = document.documentElement.clientHeight - this.marginSize;
+          }
+          else if (window.innerHeight) {
+            height = window.innerHeight - this.marginSize;
+          }
+        }
+
+        //console.log('popup width = ' + width + ', popup height = ' + height);
+
+        this.element = document.createElement('div');
+
+        this.element.className = 'popupmodal';
+
+        document.getElementsByTagName('body')[0].appendChild(this.element);
+
+        this.element.innerHTML = '<table width="100%" height="100%">' +
+                                   '<tr>' +
+                                     '<td valign="middle" align="center">' +
+                                       '<div id="popupContainer" align="center">' + // Content
+                                         '<table width="100%" height="100%">' +
+                                           '<tr>' +
+                                             '<td valign="middle" align="center">' +
+                                               '<button onclick="PopupModal.close();">' +
+                                                 'Close modal popup' +
+                                               '</button>' +
+                                             '</td>' +
+                                           '</tr>' +
+                                         '</table>' +
+                                       '</div>' +
+                                     '</td>' +
+                                   '</tr>' +
+                                 '</table>';
+
+        var popupContentElement = document.getElementById('popupContainer');
+
+        popupContentElement.style.width = width + 'px';
+        popupContentElement.style.height = height + 'px';
+
+        this.element.style.visibility = 'visible';
+      }
+
+      PopupModal.close = function() {
+        this.element.style.visibility = 'hidden';
+
+        document.getElementsByTagName('body')[0].removeChild(this.element);
+      }
+    </script>
+  </head>
+  <body>
+    Popup modal test
+
+    <br/><br/>
+
+    <button onclick="PopupModal.open();">Show modal popup</button>
+  </body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        background-color: #ccc;
+      }
+    </style>
+
+    <script type="text/javascript">
+      function onLoad() {
+        var canvas = document.getElementById('canvas_1');
+
+        canvas.width = 20;
+        canvas.height = 20;
+
+        if (!canvas.getContext) {
+          alert('Canvas is not supported.');
+        }
+
+        var context = canvas.getContext("2d");
+        
+        context.fillStyle = "rgb(255,0,0)";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        var imageData = context.getImageData(0, 0, canvas.height, canvas.width);
+
+        var pixels = new Array();
+
+        for (var i = 0; i < canvas.height; i++) {
+          pixels[i] = new Array();
+
+          for (var j = 0; j < canvas.width; j++) {
+            pixels[i][j] = imageData.data[i * canvas.width + j * 4];
+
+            console.log('pixels[' + i + '][' + j + '] = ' + imageData.data[i * (canvas.width * 4) + (j * 4) + 0] + ', ' +
+                                                            imageData.data[i * (canvas.width * 4) + (j * 4) + 1] + ', ' +
+                                                            imageData.data[i * (canvas.width * 4) + (j * 4) + 2]);
+
+            imageData.data[i * (canvas.width * 4) + (j * 4) + 0] = 0;   // Red
+            imageData.data[i * (canvas.width * 4) + (j * 4) + 1] = 0;   // Green
+            imageData.data[i * (canvas.width * 4) + (j * 4) + 2] = 255; // Blue
+          }
+        }
+
+        context.putImageData(imageData, 0, 0);
+      }
+    </script>
+  </head>
+
+  <body onload="onLoad()">
+    <canvas id="canvas_1"></canvas>
+  </body>
+</html>

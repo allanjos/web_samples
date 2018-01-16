@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <style>
+      .window-class {
+        position: absolute;
+        top: 100px;
+        left: 100px;
+        width: 100px;
+        height: 100px;
+        background-color: green;
+      }
+    </style>
+
+    <script type="text/javascript">
+      var dragStarted = false;
+      var deltaX = 0;
+      var deltaY = 0;
+
+      function dragBegin(e) {
+        dragStarted = true;
+
+        var x = 0;
+        var y = 0;
+
+        if (e.pageX) {
+          x = e.pageX;
+          y = e.pageY;
+        }
+        else {
+          x = e.clientX;
+          y = e.clientY;
+        }
+
+        deltaX = x - document.getElementById('window01').offsetLeft;
+        deltaY = y - document.getElementById('window01').offsetTop;
+      }
+
+      function dragEnd(e) {
+        dragStarted = false;
+      }
+
+      function drag(e) {
+        if (!dragStarted) {
+          return;
+        }
+
+        var x = 0;
+        var y = 0;
+
+        if (e.pageX) {
+          x = e.pageX;
+          y = e.pageY;
+        }
+        else {
+          x = e.clientX;
+          y = e.clientY;
+        }
+
+        document.getElementById('window01').style.top = (y - deltaY) + 'px';
+        document.getElementById('window01').style.left = (x - deltaX) + 'px';
+      }
+    </script>
+  </head>
+  <body>
+    <div id="window01" class="window-class"
+              onmousedown="dragBegin(event);"
+              onmouseup="dragEnd(event);"
+              onmousemove="drag(event);"
+              onmouseout="dragEnd();"></div>
+  </body>
+</html>

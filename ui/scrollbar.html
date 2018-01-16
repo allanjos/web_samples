@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <style>
+      * {
+        padding: 0;
+        border: 0;
+      }
+
+      .scrollable_area {
+        clear: both;
+        width: 500px;
+        height: 400px;
+      }
+
+      .content {
+        float: left;
+        background-color: #f1f1f1;
+        color: #000;
+        opacity: 0.8;
+      }
+
+      .scrollbar {
+        float:left;
+        background-color: #c0c0c0;
+        opacity: 0.5;
+        position: relative;
+      }
+
+      .bar {
+        background-color: green;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    </style>
+
+    <script type="text/javascript" language="JavaScript">
+      /** Scroll bar object implementation. */
+
+      function ScrollBar(element) {
+        console.log('ScrollBar()');
+
+        this.element = element;
+
+        this.init();
+      }
+
+      ScrollBar.prototype = {
+        element: null,
+        height: 0,
+        width: 0,
+
+        contentElement: null,
+        paddingContent: 5,
+        contentWidth: 0,
+
+        scrollElement: null,
+        scrollBarWidth: 10,
+
+        thumbElement: null,
+        thumbWidth: 0,
+        thumbHeight: 50,
+      };
+
+      ScrollBar.prototype.init = function() {
+        console.log('ScrollBar.init()');
+
+        // Content element
+
+        this.contentElement = this.element.getElementsByClassName('content')[0];
+
+        // Scroll bar element
+
+        this.scrollElement = this.element.getElementsByClassName('scrollbar')[0];
+
+        // Scroll bar element
+
+        if (this.scrollElement) {
+          this.thumbElement = this.scrollElement.getElementsByClassName('bar')[0];
+        }
+
+        // Layout
+
+        this.layout();
+
+        // Event listeners
+
+        this.enableListeners();
+
+        this.updateThumbFromContent();
+      };
+
+      ScrollBar.prototype.layout = function() {
+        console.log('ScrollBar.layout()');
+
+        this.calculate();
+
+        this.layoutContent();
+
+        this.layoutBar();
+      };
+
+      ScrollBar.prototype.calculate = function() {
+        console.log('ScrollBar.calculate()');
+
+        //this.borderWidth = this.element.style.borderWidth;
+
+        console.log('this.element.style.borderWidth = ' + this.element.style.borderWidth);
+
+        // Scroll area width
+
+        this.width = this.element.offsetWidth;
+
+        // Content area width
+
+        this.contentWidth = this.width - this.scrollBarWidth - this.paddingContent * 2;
+
+        this.height = this.element.offsetHeight;
+
+        // Thumb dimensions
+
+        this.thumbWidth = this.scrollBarWidth;
+      };
+
+      ScrollBar.prototype.layoutContent = function() {
+        console.log('ScrollBar.layoutContent()');
+
+        this.contentElement.style.overflow = 'hidden';
+
+        this.contentElement.style.height = (this.height - this.paddingContent * 2) + 'px';
+
+        this.contentElement.style.padding = this.paddingContent + 'px';
+
+        this.contentElement.style.width = this.contentWidth + 'px';
+
+        //this.contentElement.style.height = this.height + 'px';
+      };
+
+      ScrollBar.prototype.layoutBar = function() {
+        console.log('ScrollBar.layoutBar()');
+
+        // Scroll area dimensions
+
+        this.scrollElement.style.height = this.height + 'px';
+
+        this.scrollElement.style.width = this.scrollBarWidth + 'px';
+
+        // Thumb layout
+
+        this.thumbElement.style.width = this.thumbWidth + 'px';
+        this.thumbElement.style.height = this.thumbHeight + 'px';
+      };
+
+      ScrollBar.prototype.setContent = function(str) {
+        if (typeof(str) == 'string') {
+          this.contentElement.innerHTML = str;
+
+          this.updateThumbFromContent();
+        }
+      };
+
+
+      ScrollBar.prototype.enableContentListener = function() {
+        console.log('enableContentListener()');
+        //if IE (and Opera depending on user setting)
+        if (document.attachEvent) {
+          console.log('attachEvent');
+
+          var that = this;
+
+          document.attachEvent("on" + mousewheelevt, that.onMouseWheelEventCall);
+        }
+        //WC3 browsers
+        else if (document.addEventListener) {
+          console.log('addEventListener');
+          //FF doesn't recognize mousewheel as of FF3.x
+          var mousewheelevt = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
+
+          var that = this;
+
+          document.addEventListener(mousewheelevt, that.onMouseWheelEventCall, false)
+        }
+      }
+
+      ScrollBar.prototype.disableContentListener = function() {
+        console.log('disableContentListener()');
+
+        var that = this;
+        // if IE (and Opera depending on user setting)
+        if (document.dettachEvent) {
+          console.log('dettachEvent');
+
+          var that = this;
+
+          document.dettachEvent("on" + mousewheelevt, that.onMouseWheelEventCall);
+        }
+        //WC3 browsers
+        else if (document.removeEventListener) {
+          console.log('removeEventListener');
+          //FF doesn't recognize mousewheel as of FF3.x
+          var mousewheelevt = (/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel"
+
+          var that = this;
+
+          document.removeEventListener(mousewheelevt, that.onMouseWheelEventCall, false);
+        }
+      }
+
+      ScrollBar.prototype.onMouseWheelEvent = function(e) {
+        console.log('onMouseWheelEvent()');
+
+        var e = window.event || e; // old IE support
+
+        var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+
+        console.log('delta = ' + delta);
+
+        if (delta == 1) {
+          this.contentElement.scrollTop -= 5;
+        }
+        else {
+          this.contentElement.scrollTop += 5;
+        }
+
+        this.updateThumbFromContent();
+      }
+
+      ScrollBar.prototype.enableListeners = function(str) {
+        var that = this;
+
+        var handler = this.onMouseWheelEvent;
+
+        this.onMouseWheelEventCall = handler.bind(that);
+
+        // Mouse event for content
+
+        this.contentElement.onmouseover = function() {
+          console.log('onmouseover');
+
+          // Enable event listener
+
+          that.enableContentListener();
+        };
+
+        this.contentElement.onmouseout = function() {
+          console.log('onmouseout');
+
+          // Disable event listener
+
+          that.disableContentListener();
+        };
+
+
+        // Mouse event for scroll
+
+        this.scrollElement.onmouseover = function() {
+          console.log('onmouseover');
+
+          that.scrollElement.style.opacity = '1.0';
+        };
+
+        this.scrollElement.onmouseout = function() {
+          console.log('onmouseout');
+
+          that.scrollElement.style.opacity = '0.5';
+        };
+
+        this.scrollElement.onmousedown = function(e) {
+          // Thumb positioning
+
+          var x = e.pageX - that.scrollElement.offsetLeft;
+          var y = e.pageY - that.scrollElement.offsetTop;
+
+          if (y > (that.scrollElement.offsetHeight - that.thumbHeight))
+            y = that.scrollElement.offsetHeight - that.thumbHeight;
+
+          that.thumbElement.style.top = y + 'px';
+
+          that.updateContentFromThumb();
+        };
+      };
+
+      ScrollBar.prototype.updateContentFromThumb = function() {
+        // Content positioning
+
+        var thumbPercent = this.thumbElement.offsetTop / (this.scrollElement.offsetHeight - this.thumbHeight);
+
+        console.log('this.thumbElement.offsetTop = ' + this.thumbElement.offsetTop);
+        console.log('thumbPercent = ' + thumbPercent);
+
+        this.contentElement.scrollTop = (this.contentElement.scrollHeight * thumbPercent);
+      };
+
+      ScrollBar.prototype.updateThumbFromContent = function() {
+        console.log('updateThumbFromContent');
+
+        console.log('this.contentElement.scrollTop = ' + this.contentElement.scrollTop);
+
+        var contentPercent = 0;
+
+        if (this.contentElement.scrollHeight -
+            this.contentElement.offsetHeight > 0)
+          contentPercent = this.contentElement.scrollTop /
+                           (this.contentElement.scrollHeight -
+                            this.contentElement.offsetHeight);
+
+        console.log('contentPercent = ' + contentPercent);
+
+        this.thumbElement.style.top = ((this.scrollElement.offsetHeight -
+                                        this.thumbHeight) *
+                                       contentPercent) + 'px';
+      };
+
+
+    </script>
+
+  </head>
+  <body onload="init();">
+    abcdef
+    <div class="scrollable_area">
+      <div class="content">content</div>
+      <div class="scrollbar">
+        <div class="bar"></div>
+      </div>
+      <div style="clear: both;"></div>
+    </div>
+    <br>
+    ghijkl
+  </body>
+</html>
+<script type="text/javascript" language="JavaScript">
+  function init() {
+    // Initialize scrolls
+
+    var scrollElement = document.getElementsByClassName('scrollable_area')[0];
+
+    var scroll = new ScrollBar(scrollElement);
+
+    var content = "\"A Imaginação\" Jean-Paul Sartre<br><br>" +
+        "Olho esta folha branca posta sobre minha mesa; percebo sua forma, sua" +
+        "cor, sua posição. Essas diferentes qualidades têm características" +
+        "comuns: em primeiro lugar, elas se dão a meu olhar como existências" +
+        "que apenas posso constatar e cujo ser não depende de forma alguma do" +
+        "meu capricho. Elas são para mim, não são eu. Mas também não são" +
+        "outrem, isto é, não dependem de nenhuma espontaneidade, nem da minha," +
+        "nem da de outra consciência.<br>" +
+        "<br>" +
+        "São, ao mesmo tempo, presentes e inertes. Essa inércia do conteúdo" +
+        "sensível, freqüentemente descrita, é a existência em si. De nada serve" +
+        "discutir se esta folha se reduz a um conjunto de representações ou se" +
+        "é ou deve ser mais do que isso. O certo é que o branco que constato" +
+        "não pode ser produzido por minha espontaneidade. Esta forma inerte," +
+        "que está aquém de todas as espontaneidades conscientes, que devemos" +
+        "observar, conhecer pouco a pouco, é o que chamamos uma coisa.<br>" +
+        "<br>" +
+        "Em hipótese alguma minha consciência seria capaz de ser uma coisa," +
+        "porque seu modo de ser em si é precisamente um ser para si. Existir, para" +
+        "ela, é ter consciência de sua existência. Ela aparece como uma pura" +
+        "espontaneidade em face do mundo das coisas que é pura inércia. Podemos," +
+        "pois, colocar desde a origem dois tipos de existência: é, com efeito," +
+        "na medida em que são inertes que as coisas escapam ao domínio da" +
+        "consciência; é sua inércia que as salvaguarda e que conserva sua" +
+        "autonomia.<br>" +
+        "<br>" +
+        "Mas eis que agora desvio a cabeça. Não vejo mais a folha de papel. Agora" +
+        "vejo o papel cinzento da parede. A folha não está mais presente, não" +
+        "está mais aí. Sei, entretanto, muito bem, que ela não se aniquilou:" +
+        "sua inércia a preserva disso. Ela cessou, simplesmente, de ser para" +
+        "mim. No entanto, ei-la de novo. Não virei a cabeça, meu olhar continua" +
+        "dirigido para o papel cinzento; nada se mexeu no quarto.<br>" +
+        "<br>" +
+        "Entretanto, a folha me aparece de novo com sua forma, sua cor e sua" +
+        "posição; e sei muito bem, no momento em que ela me aparece, que é" +
+        "precisamente a folha que eu via há pouco. É ela, verdadeiramente," +
+        "em pessoa? Sim e não. Afirmo, sem dúvida, que é a mesma folha com as" +
+        "mesmas qualidades. Mas não ignoro que esta folha ficou lá no seu lugar;" +
+        "sei que não desfruto de sua presença; se quero vê-Ia realmente é" +
+        "preciso que me volte para minha escrivaninha, que concentre meus olhares" +
+        "sobre o mata-borrão em que a folha está colocada.<br>" +
+        "<br>" +
+        "A folha que me aparece neste momento tem uma identidade de essência com" +
+        "a folha que eu via há pouco. E, por essência, não entendo somente" +
+        "a estrutura, mas, ainda, a individualidade mesma. Essa identidade" +
+        "de essência, porém, não está acompanhada por uma identidade de" +
+        "existência.<br>" +
+        "<br>" +
+        "É bem a mesma folha, a folha que está presentemente sobre minha" +
+        "escrivaninha, mas ela existe de outro modo. Eu não a vejo, ela não" +
+        "se impõe como um limite à minha espontaneidade; tampouco é um inerte" +
+        "existindo em si.<br>" +
+        "<br>" +
+        "Em uma palavra, ela não existe de fato, existe em imagem.<br><br>" +
+
+        "Do Prefácio de \"A Imaginação\", de Jean-Paul Sartre.";
+
+    scroll.setContent(content);
+  }
+</script>

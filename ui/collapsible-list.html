@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html;">
+    <style>
+      #menuContainer {
+        width: 250px;
+        height: 350px;
+        overflow: auto;
+      }
+
+      #menuContainer * {
+        color: #fff;
+        text-shadow: #000 1px 1px 1px;
+      }
+
+      #menuContainer table tr td {
+        vertical-align: middle;
+        text-align: center;
+        padding: 5px;
+      }
+
+      .menuItem {
+      }
+
+      .menuTitle {
+        font-weight: bold;
+      }
+    </style>
+
+    <script type="text/javascript">
+      function menuUpdate() {
+        for (var i = 0; i < document.getElementsByClassName('menuItem').length; i++) {
+          var element = document.getElementsByClassName('menuItem')[i];
+
+          //alert(element.innerHTML);
+
+          if (i == 0) {
+            element.style.height = '50%';
+          }
+          else {
+            element.style.height = '25%';
+          }
+        }
+      }
+
+      function onMenuItemSelect(elementSelected) {
+        console.log('onMenuItemSelect');
+
+        //console.log(elementSelected.innerHTML);
+
+        console.log('menuContainer height: ' + document.getElementById('menuContainer').offsetHeight);
+
+        var itemsCount = document.getElementsByClassName('menuItem').length;
+
+        console.log("document.getElementsByClassName('menuItem').length: " + itemsCount);
+
+        var itemHeightUnselected = 30;
+
+        console.log('itemHeightUnselected: ' + itemHeightUnselected);
+
+        for (var i = 0; i < itemsCount; i++) {
+          var element = document.getElementsByClassName('menuItem')[i];
+
+          //console.log(element.innerHTML);
+
+          if (element.id == elementSelected.id) {
+            console.log('ELEMENT "' + element.id + '" FOUND ***');
+
+            element.style.height = (document.getElementById('menuContainer').offsetHeight -
+                                    itemsCount * itemHeightUnselected) + 'px';
+
+            element.innerHTML = boxExpanded('<span class="menuTitle">' + element.getAttribute('title') + '</span>' +
+                                '<br>' + element.getAttribute('brief'));
+          }
+          else {
+            element.style.height = itemHeightUnselected + 'px';
+
+            element.innerHTML = boxExpanded(element.getAttribute('title'));
+          }
+        }
+      }
+
+      function boxExpanded(str, align, valign) {
+        return '<table width="100%" height="100%">' +
+                 '<tr>' +
+                   '<td align="' + (align ? align : 'center') + '" valign="' + (valign ? valign : 'middle') + '">' +
+                     str +
+                   '</td>' +
+                 '</tr>' +
+                 '</table>';
+      }
+
+    </script>
+  </head>
+
+  <body>
+    <div id="menuContainer">
+      <div id="menuItem01" class="menuItem" style="background-color: #006699;"
+        onclick="onMenuItemSelect(this);" onmouseenter="onMenuItemSelect(this);"
+        title="Item 01" brief="Conteúdo do item 01">
+      </div>
+      <div id="menuItem02" class="menuItem" style="background-color: orange;"
+        onclick="onMenuItemSelect(this);" onmouseenter="onMenuItemSelect(this);"
+        title="Item 02" brief="Conteúdo do item 02">
+      </div>
+      <div id="menuItem03" class="menuItem" style="background-color: #555;"
+        onclick="onMenuItemSelect(this);" onmouseenter="onMenuItemSelect(this);"
+        title="Item 03" brief="Conteúdo do item 03">
+      </div>
+    </div>
+  </body>
+</html>
+
+<script type="text/javascript">
+  menuUpdate();
+
+  onMenuItemSelect(document.getElementById('menuItem01'));
+</script>

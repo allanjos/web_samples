@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+
+    <style>
+      .banner {
+        width: 600px;
+        height: 300px;
+        border: #ccc 1px solid;
+      }
+
+      .div-table {
+        display: table;
+        width: 100%;
+        height: 100%;
+      }
+
+      .div-cell {
+        display: table-cell;
+        vertical-align: middle;
+        text-align: center;
+      }
+
+      .banner_pages {
+        width: 600px;
+        border: #006699 1px solid;
+      }
+    </style>
+
+    <script type="text/javascript">
+      var Banner = {
+        items: null,
+        animationHandler: null,
+        elementId: '',
+        element: null,
+        elementPagesId: '',
+        currentItemIndex: 0,
+        paused: false,
+        defaultDelay: 5000
+      };
+
+      Banner.setElementId = function(elementId, elementPagesId) {
+        this.elementId = elementId;
+
+        this.elementPagesId = elementPagesId;
+
+        if (document.getElementById(this.elementId)) {
+          this.element = document.getElementById(this.elementId);
+        }
+      }
+
+      Banner.setItems = function(items) {
+        console.log('Banner.setItems()');
+
+        this.items = items;
+
+        var pagesText = '';
+
+        pagesText += '<button onclick="Banner.start();">Start</button>';
+        pagesText += ' <button onclick="Banner.pause();">Pause</button>';
+        pagesText += ' <button onclick="Banner.stop();">Stop</button>';
+
+        for (var i = 0; i < this.items.length; i++) {
+          pagesText += ' <button onclick="Banner.setItem('+ i + ');">' + i + '</button>';
+        }
+
+        document.getElementById(this.elementPagesId).innerHTML = pagesText;
+      }
+
+      Banner.start = function() {
+        console.log('Banner.start()');
+
+        if (!this.paused) {
+          this.stop();
+
+          this.currentItemIndex = 0;
+        }
+
+        this.paused = false;
+
+        this.run();
+      };
+
+      Banner.run = function() {
+        console.log('Banner.run() item=' + this.currentItemIndex +
+                    ', items=' + this.items.length +
+                    ', timestamp=' + (new Date).getTime());
+
+        if (!this.element) {
+          console.log('Error. Banner elemenet is not defined.');
+
+          return;
+        }
+
+        this.setItem(this.currentItemIndex);
+
+        var delay = 0;
+
+        if (this.items[this.currentItemIndex].delay !== undefined) {
+          delay = this.items[this.currentItemIndex].delay;
+        }
+        else {
+          delay = this.defaultDelay;
+        }
+
+        if (this.currentItemIndex < (this.items.length - 1))
+          ++this.currentItemIndex;
+        else
+          this.currentItemIndex = 0;
+
+        this.animationHandler = setTimeout(function() {
+            Banner.run();
+        }, delay);
+      };
+
+      Banner.stopAnimation = function() {
+        if (this.animationHandler) {
+          clearTimeout(this.animationHandler);
+
+          this.animationHandler = null;
+        }
+      };
+
+      Banner.stop = function() {
+        console.log('Banner.stop()');
+
+        this.stopAnimation();
+
+        this.paused = false;
+      };
+
+      Banner.pause = function() {
+        console.log('Banner.pause()');
+
+        this.paused = true;
+
+        this.stopAnimation();
+      };
+
+      Banner.setItem = function(i) {
+        console.log('Banner.setItem(' + i + ')');
+
+        if (this.currentItemIndex < 0 || this.currentItemIndex >= this.items.length) {
+          console.log('Invalid item index.');
+
+          return;
+        }
+
+        this.currentItemIndex = i;
+
+        this.element.innerHTML = this.items[this.currentItemIndex].src;
+      };
+
+      var items = [
+        {
+          src: '<div class="div-table">' +
+                 '<div class="div-cell" style="background-color: green; color: #fff;">' +
+                   'X' +
+                 '</div>' +
+               '</div>'
+        },
+        {
+          src: '<div class="div-table">' +
+                 '<div class="div-cell" style="background-color: #006699; color: #fff;">' +
+                   'Y' +
+                 '</div>' +
+               '</div>'
+        },
+        {
+          src: '<div class="div-table">' +
+                 '<div class="div-cell" style="background-color: #000; color: #fff;">' +
+                   'Z' +
+                 '</div>' +
+               '</div>'
+        }
+      ];
+
+      function onLoad() {
+        console.log('onLoad()');
+
+        Banner.setElementId('banner', 'banner_pages');
+        Banner.setItems(items);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="banner" class="banner"></div>
+
+    <div id="banner_pages" class="banner_pages"></div>
+  </body>
+</html>
+<script type="text/javascript">
+  if (window.addEventListener)
+    window.addEventListener('load', onLoad, false);
+  else if (window.attachEvent)
+    window.attachEvent('onload', onLoad);
+</script>
