@@ -1,0 +1,38 @@
+<div>
+    <span ng-controller="formController">
+        <h1>PAGE 02</h1>
+
+        <button ng-click="buttonSwitch()">Show/hide</button>
+
+        <button ng-show="showButton">Button 2</button>
+
+        <br/><br/>
+
+        Name:
+        <input type="text" ng-model="currentInput"/>
+
+        <br/>
+
+        Current input: {{currentInput}}
+    </span>
+
+    <br/><br/>
+
+    <div ng-controller="controllerInFile">
+        var01 (expression) = {{var01}}
+
+        <br/>
+
+        var05 (bind) = <span ng-bind="var05"></span>
+
+        <p>{{5 | currency}} + {{5 | currency}} = {{5 + 5 | currency}}</p>
+
+        <div w3-test-directive=""></div>
+    </div>
+
+    <br/>
+
+    <div ng-controller="requestCtrl">
+        <span ng-bind="receivedData">xx</span>
+    </div>
+</div>
