@@ -1,5 +1,5 @@
 app.controller('formController', function($scope) {
-    $scope.currentInput = "Testando 1 2 3...";
+    $scope.currentInput = "Unknown";
     $scope.showButton = true;
 
     $scope.buttonSwitch = function() {
@@ -14,4 +14,8 @@ app.controller('formController', function($scope) {
             $scope.showButton = true;
         }
     };
+
+    $scope.changeName = function() {
+        $scope.name = "Isaac Asimov";
+    }
 });

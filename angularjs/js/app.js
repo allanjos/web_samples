@@ -50,16 +50,18 @@ app.controller('helpCtrl', function($scope) {
 app.controller('requestCtrl', function($scope, $http) {
     console.log('requestCtrl');
 
-    $scope.receivedData = 'Requesting data..';
+    $scope.requestData = function() {
+        $scope.receivedData = 'Requesting data..';
 
-    $http.get('list.json').then(
-        function(response) {
-            console.log('received data: ' + response.data);
+        $http.get('list.json').then(
+            function(response) {
+                console.log('received data: ' + response.data);
 
-            $scope.receivedData = 'Received data: ' + JSON.stringify(response.data);
-        },
-        function() {
-            console.log('error on requesting data.');
-        }
-    );
+                $scope.receivedData = 'Received data: ' + JSON.stringify(response.data);
+            },
+            function() {
+                console.log('error on requesting data.');
+            }
+        );
+    };
 });

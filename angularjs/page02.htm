@@ -4,16 +4,16 @@
 
         <button ng-click="buttonSwitch()">Show/hide</button>
 
-        <button ng-show="showButton">Button 2</button>
+        <button ng-show="showButton" ng-click="changeName()">Update to a great name</button>
 
         <br/><br/>
 
         Name:
-        <input type="text" ng-model="currentInput"/>
+        <input type="text" ng-model="name"/>
 
         <br/>
 
-        Current input: {{currentInput}}
+        Current name: {{currentName}}
     </span>
 
     <br/><br/>
@@ -33,6 +33,7 @@
     <br/>
 
     <div ng-controller="requestCtrl">
+        <button ng-click="requestData()">Request data</button>
         <span ng-bind="receivedData">xx</span>
     </div>
 </div>
