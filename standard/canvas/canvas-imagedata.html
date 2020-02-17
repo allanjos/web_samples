@@ -1,16 +1,38 @@
 <!DOCTYPE html>
+<!--
+Sample: Canvas image data.
+AJ
+-->
 <html>
   <head>
     <style>
       body {
-        background-color: #ccc;
+        background-color: #f1f1f1;
       }
     </style>
 
     <script type="text/javascript">
       function onLoad() {
-        var canvas = document.getElementById('canvas_1');
+        // Canvas [R]ed
 
+        var canvas1 = document.getElementById('canvas_1');
+
+        canvas1Init(canvas1, [255, 0, 0]);
+
+        // Canvas [B]lue
+
+        var canvas2 = document.getElementById('canvas_2');
+
+        canvas1Init(canvas2, [0, 255, 0]);
+
+        // Canvas [G]reen
+
+        var canvas3 = document.getElementById('canvas_3');
+
+        canvas1Init(canvas3, [0, 0, 255]);
+      }
+
+      function canvas1Init(canvas, rgb) {
         canvas.width = 20;
         canvas.height = 20;
 
@@ -37,9 +59,9 @@
                                                             imageData.data[i * (canvas.width * 4) + (j * 4) + 1] + ', ' +
                                                             imageData.data[i * (canvas.width * 4) + (j * 4) + 2]);
 
-            imageData.data[i * (canvas.width * 4) + (j * 4) + 0] = 0;   // Red
-            imageData.data[i * (canvas.width * 4) + (j * 4) + 1] = 0;   // Green
-            imageData.data[i * (canvas.width * 4) + (j * 4) + 2] = 255; // Blue
+            imageData.data[i * (canvas.width * 4) + (j * 4) + 0] = rgb[0];   // Red
+            imageData.data[i * (canvas.width * 4) + (j * 4) + 1] = rgb[1];   // Green
+            imageData.data[i * (canvas.width * 4) + (j * 4) + 2] = rgb[2];   // Blue
           }
         }
 
@@ -50,5 +72,7 @@
 
   <body onload="onLoad()">
     <canvas id="canvas_1"></canvas>
+    <canvas id="canvas_2"></canvas>
+    <canvas id="canvas_3"></canvas>
   </body>
 </html>

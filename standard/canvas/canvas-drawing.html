@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<!--
+Sample: Canvas drawing.
+[AJ]
+-->
+<html>
+    <body>
+        <canvas id="canvas" width="800" height="600" style="border:1px solid #000000;">
+        </canvas>
+    </body>
+</html>
+
+<script type="text/javascript">
+
+var canvas = document.getElementById("canvas");
+
+var ctx = canvas.getContext("2d");
+
+drawSquare(ctx, 50, 50, 100);
+
+drawRectangle(ctx, 50, 200, 300, 200);
+
+// Mouse global object
+
+var mouse = {
+    isDown: false,
+    isDragging: false
+};
+
+// Geometry
+
+function drawSquare(ctx, x, y, w) {
+    ctx.moveTo(x, y);
+    ctx.lineTo(x, y + w);
+    ctx.lineTo(x + w, y + w);
+    ctx.lineTo(x + w, y);
+    ctx.lineTo(x, y);
+
+    ctx.stroke();
+}
+
+function drawRectangle(ctx, x, y, w, h) {
+    ctx.moveTo(x, y);
+    ctx.lineTo(x, y + h);
+    ctx.lineTo(x + w, y + h);
+    ctx.lineTo(x + w, y);
+    ctx.lineTo(x, y);
+
+    ctx.stroke();
+}
+
+// Mouse coordinates
+
+function getPosition(canvas, event) {
+    var x = event.x;
+    var y = event.y;
+
+    x -= canvas.offsetLeft;
+    y -= canvas.offsetTop;
+
+    return {x: x, y: y};
+}
+
+// Mouse events
+
+// Mousedown
+
+canvas.addEventListener("mousedown", mouseDown, false);
+
+function mouseDown(event) {
+    var position = getPosition(canvas, event);
+
+    console.log("mousedown x:" + position.x + ", y:" + position.y);
+
+    mouse.isDown = true;
+}
+
+// Mouseup
+
+document.addEventListener("mouseup", docMouseUp, false);
+
+function docMouseUp(event) {
+    console.log('docMouseUp()');
+    mouse.isDown = false;
+
+    if (!mouse.isDragging) {
+        console.log('dragging stopped');
+
+        mouse.isDragging = false;
+    }
+}
+
+canvas.addEventListener("mouseup", mouseUp, false);
+
+function mouseUp(event) {
+    var position = getPosition(canvas, event);
+
+    console.log("mouseup x:" + position.x + ", y:" + position.y);
+
+    mouse.isDown = false;
+
+    if (!mouse.isDragging) {
+        console.log('dragging stopped');
+
+        mouse.isDragging = false;
+    }
+}
+
+// Mousemove
+
+canvas.addEventListener('mousemove', function(event) {
+    var mousePos = getPosition(canvas, event);
+
+    console.log('mousemove: ' + mousePos.x + ',' + mousePos.y);
+
+    if (mouse.isDown) {
+        if (!mouse.isDragging) {
+            console.log('dragging started');
+
+            mouse.isDragging = true;
+        }
+
+        console.log('dragging');
+    }
+}, false);
+
+// Mouseenter
+
+canvas.addEventListener('mouseenter', function(event) {
+    var mousePos = getPosition(canvas, event);
+
+    console.log('mouseenter: ' + mousePos.x + ',' + mousePos.y);
+}, false);
+
+// Mouseout
+
+canvas.addEventListener('mouseout', function(event) {
+    var mousePos = getPosition(canvas, event);
+
+    console.log('mouseout: ' + mousePos.x + ',' + mousePos.y);
+
+    if (!mouse.isDragging) {
+        console.log('dragging stopped');
+
+        mouse.isDragging = false;
+    }
+}, false);
+
+</script>
+
