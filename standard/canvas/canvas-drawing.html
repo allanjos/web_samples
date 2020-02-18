@@ -15,18 +15,6 @@ Sample: Canvas drawing.
 // Geometry
 
 var Drawer = {
-    /*
-    drawSquare: function (context, x, y, w) {
-        context.moveTo(x, y);
-        context.lineTo(x, y + w);
-        context.lineTo(x + w, y + w);
-        context.lineTo(x + w, y);
-        context.lineTo(x, y);
-
-        context.stroke();
-    },
-    */
-
     drawRectangle: function (context, x, y, w, h) {
         context.beginPath();
 
@@ -68,10 +56,16 @@ var Canvas = {
     context: null,
     mouse: {
         isDown: false,
-        isDragging: false
+        isDragging: false,
+        previous: {
+            x: -1,
+            y: -1
+        }
     },
 
     items: [],
+
+    itemCurrent: -1,
 
     getContext: function () {
         return this.context;
@@ -128,11 +122,11 @@ var Canvas = {
     },
 
     callbackMouseDown: function (event) {
-        var position = Canvas.getPosition(event);
+        var position = this.getPosition(event);
 
         console.log("mousedown x:" + position.x + ", y:" + position.y);
 
-        Canvas.mouse.isDown = true;
+        this.mouse.isDown = true;
 
         for (var itemIndex = 0; itemIndex < this.items.length; itemIndex++) {
             console.log('Draw section ' + itemIndex + ': ', this.items[itemIndex]);
@@ -141,6 +135,8 @@ var Canvas = {
 
             if (this.mouseIsWithinSection(event, item)) {
                 console.log('MOUSE DOWN INSIDE SECTION');
+
+                this.itemCurrent = itemIndex;
             }
             else {
                 console.log('MOUSE DOWN OUTSIDE SECTION');
@@ -149,62 +145,100 @@ var Canvas = {
     },
 
     callbackMouseUp: function (event) {
-        var position = Canvas.getPosition(event);
+        var position = this.getPosition(event);
 
         console.log("mouseup x:" + position.x + ", y:" + position.y);
 
-        Canvas.mouse.isDown = false;
+        this.mouse.isDown = false;
 
-        if (!Canvas.mouse.isDragging) {
+        if (!this.mouse.isDragging) {
             console.log('dragging stopped');
 
-            Canvas.mouse.isDragging = false;
+            this.mouse.isDragging = false;
         }
+
+        this.resetItemSelection();
     },
 
     callbackDocMouseUp: function (event) {
         console.log('callbackDocMouseUp()');
 
-        Canvas.mouse.isDown = false;
+        this.mouse.isDown = false;
 
-        if (!Canvas.mouse.isDragging) {
+        if (this.mouse.isDragging) {
             console.log('dragging stopped');
 
-            Canvas.mouse.isDragging = false;
+            this.mouse.isDragging = false;
         }
+
+        this.resetItemSelection();
     },
 
     callbackMouseMove: function(event) {
-        var mousePos = Canvas.getPosition(event);
+        var mousePos = this.getPosition(event);
 
         console.log('mousemove: ' + mousePos.x + ',' + mousePos.y);
 
-        if (Canvas.mouse.isDown) {
-            if (!Canvas.mouse.isDragging) {
+        if (this.mouse.isDown) {
+
+            if (!this.mouse.isDragging) {
                 console.log('dragging started');
 
-                Canvas.mouse.isDragging = true;
+                this.mouse.isDragging = true;
             }
 
             console.log('dragging');
+
+            if (this.itemCurrent != -1) {
+                var item = this.items[this.itemCurrent];
+
+                if (this.mouse.previous.x != -1 && this.mouse.previous.x < mousePos.x) {
+                    var delta = mousePos.x - this.mouse.previous.x;
+
+                    item.x += delta;
+                }
+
+                if (this.mouse.previous.y != -1 && this.mouse.previous.y < mousePos.y) {
+                    var delta = mousePos.y - this.mouse.previous.y;
+
+                    item.y += delta;
+                }
+
+                if (this.mouse.previous.x != -1 && this.mouse.previous.x > mousePos.x) {
+                    var delta = this.mouse.previous.x - mousePos.x;
+
+                    item.x -= delta;
+                }
+
+                if (this.mouse.previous.y != -1 &&  this.mouse.previous.y > mousePos.y) {
+                    var delta = this.mouse.previous.y - mousePos.y;
+
+                    item.y -= delta;
+                }
+
+                this.draw();
+
+                this.mouse.previous.x = mousePos.x;
+                this.mouse.previous.y = mousePos.y;
+            }
         }
     },
 
     callbackMouseEnter: function(event) {
-        var mousePos = Canvas.getPosition(event);
+        var mousePos = this.getPosition(event);
 
         console.log('mouseenter: ' + mousePos.x + ',' + mousePos.y);
     },
 
     callbackMouseOut: function(event) {
-        var mousePos = Canvas.getPosition(event);
+        var mousePos = this.getPosition(event);
 
         console.log('mouseout: ' + mousePos.x + ',' + mousePos.y);
 
-        if (!Canvas.mouse.isDragging) {
+        if (!this.mouse.isDragging) {
             console.log('dragging stopped');
 
-            Canvas.mouse.isDragging = false;
+            this.mouse.isDragging = false;
         }
     },
 
@@ -271,6 +305,12 @@ var Canvas = {
         }
 
         return false;
+    },
+
+    resetItemSelection: function() {
+        this.itemCurrent = -1;
+        this.mouse.previous.x = -1;
+        this.mouse.previous.y = -1;
     }
 };
 
@@ -281,8 +321,6 @@ Canvas.setElementId('canvas');
 Canvas.init();
 
 Canvas.addSection({x: 50, y: 50, w: 300, h: 200});
-
 Canvas.addSection({x: 50, y: 300, w: 300, h: 200});
 
 </script>
-
