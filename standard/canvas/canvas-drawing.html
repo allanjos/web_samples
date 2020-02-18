@@ -57,6 +57,7 @@ var Canvas = {
     mouse: {
         isDown: false,
         isDragging: false,
+        isResizing: true,
         previous: {
             x: -1,
             y: -1
@@ -137,6 +138,8 @@ var Canvas = {
                 console.log('MOUSE DOWN INSIDE SECTION');
 
                 this.itemCurrent = itemIndex;
+
+                this.canvas.style.cursor = 'move';
             }
             else {
                 console.log('MOUSE DOWN OUTSIDE SECTION');
@@ -192,28 +195,52 @@ var Canvas = {
             if (this.itemCurrent != -1) {
                 var item = this.items[this.itemCurrent];
 
-                if (this.mouse.previous.x != -1 && this.mouse.previous.x < mousePos.x) {
-                    var delta = mousePos.x - this.mouse.previous.x;
+                // Drag item
 
-                    item.x += delta;
+                if (this.mouse.previous.x != -1) {
+                    if (this.mouse.previous.x >= (item.x + item.w - 1) && this.mouse.previous.x <= (item.x + item.w + 1)) {
+                        this.canvas.style.cursor = 'ew-resize';
+
+                        var delta = mousePos.x - this.mouse.previous.x;
+
+                        if (item.w + delta > 0) {
+                            item.w += delta;   
+                        }
+
+                        this.mouse.isResizing = true;
+                    }
+                    else if (!this.mouse.isResizing && this.mouse.previous.x < mousePos.x) {
+                        var delta = mousePos.x - this.mouse.previous.x;
+
+                        item.x += delta;
+                    }
+                    else if (!this.mouse.isResizing && this.mouse.previous.x > mousePos.x) {
+                        var delta = this.mouse.previous.x - mousePos.x;
+
+                        item.x -= delta;
+                    }
                 }
 
-                if (this.mouse.previous.y != -1 && this.mouse.previous.y < mousePos.y) {
-                    var delta = mousePos.y - this.mouse.previous.y;
+                if (this.mouse.previous.y != -1) {
+                    if (this.mouse.previous.y >= (item.y + item.h - 1) && this.mouse.previous.y <= (item.y + item.h + 1)) {
+                        var delta = mousePos.y - this.mouse.previous.y;
 
-                    item.y += delta;
-                }
+                        if (item.h + delta > 0) {
+                            item.h += delta;
+                        }
 
-                if (this.mouse.previous.x != -1 && this.mouse.previous.x > mousePos.x) {
-                    var delta = this.mouse.previous.x - mousePos.x;
+                        this.mouse.isResizing = true;
+                    }
+                    else if (!this.mouse.isResizing && this.mouse.previous.y < mousePos.y) {
+                        var delta = mousePos.y - this.mouse.previous.y;
 
-                    item.x -= delta;
-                }
+                        item.y += delta;
+                    }
+                    else if (!this.mouse.isResizing && this.mouse.previous.y > mousePos.y) {
+                        var delta = this.mouse.previous.y - mousePos.y;
 
-                if (this.mouse.previous.y != -1 &&  this.mouse.previous.y > mousePos.y) {
-                    var delta = this.mouse.previous.y - mousePos.y;
-
-                    item.y -= delta;
+                        item.y -= delta;
+                    }
                 }
 
                 this.draw();
@@ -311,6 +338,10 @@ var Canvas = {
         this.itemCurrent = -1;
         this.mouse.previous.x = -1;
         this.mouse.previous.y = -1;
+        this.mouse.isDragging = false;
+        this.mouse.isResizing = false;
+
+        this.canvas.style.cursor = 'default';
     }
 };
 
