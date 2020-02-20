@@ -5,12 +5,20 @@ Sample: Canvas drawing.
 -->
 <html>
     <body>
+        <h1>Physical organization:</h1>
+
         <canvas id="canvas" width="800" height="600" style="border:1px solid #000000;">
         </canvas>
+
+        <h1>Sections information:</h1>
+
+        <div id="report"></div>
     </body>
 </html>
 
 <script type="text/javascript">
+
+var reportElement = document.getElementById('report');
 
 // Geometry
 
@@ -347,6 +355,8 @@ var Canvas = {
         this.drawGrid();
 
         this.drawSections();
+
+        this.report();
     },
 
     mouseGetObjectWithin: function(event) {
@@ -396,6 +406,22 @@ var Canvas = {
         this.mouse.isResizing = false;
 
         this.canvas.style.cursor = 'default';
+    },
+
+    report: function() {
+        var reportStr = '';
+
+        if (!reportElement) {
+            return;
+        }
+
+        for (var itemIndex = 0; itemIndex < this.items.length; itemIndex++) {
+            var item = this.items[itemIndex];
+
+            reportStr += JSON.stringify(item) + '<br/>';
+        }
+
+        reportElement.innerHTML = reportStr;
     }
 };
 
