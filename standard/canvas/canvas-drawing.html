@@ -183,7 +183,6 @@ var Canvas = {
         console.log('mousemove: ' + mousePos.x + ',' + mousePos.y);
 
         if (this.mouse.isDown) {
-
             if (!this.mouse.isDragging) {
                 console.log('dragging started');
 
@@ -212,12 +211,16 @@ var Canvas = {
                     else if (!this.mouse.isResizing && this.mouse.previous.x < mousePos.x) {
                         var delta = mousePos.x - this.mouse.previous.x;
 
-                        item.x += delta;
+                        if ((item.x + delta) < (this.canvas.width - item.w)) {
+                            item.x += delta;
+                        }
                     }
                     else if (!this.mouse.isResizing && this.mouse.previous.x > mousePos.x) {
                         var delta = this.mouse.previous.x - mousePos.x;
 
-                        item.x -= delta;
+                        if (item.x - delta > 0) {
+                            item.x -= delta;
+                        }
                     }
                 }
 
@@ -234,12 +237,16 @@ var Canvas = {
                     else if (!this.mouse.isResizing && this.mouse.previous.y < mousePos.y) {
                         var delta = mousePos.y - this.mouse.previous.y;
 
-                        item.y += delta;
+                        if ((item.y + delta) < (this.canvas.height - item.h)) {
+                            item.y += delta;
+                        }
                     }
                     else if (!this.mouse.isResizing && this.mouse.previous.y > mousePos.y) {
                         var delta = this.mouse.previous.y - mousePos.y;
 
-                        item.y -= delta;
+                        if (item.y - delta > 0) {
+                            item.y -= delta;
+                        }
                     }
                 }
 
@@ -247,6 +254,27 @@ var Canvas = {
 
                 this.mouse.previous.x = mousePos.x;
                 this.mouse.previous.y = mousePos.y;
+            }
+        }
+        // Mouse is up
+        else {
+            var item = this.mouseGetObjectWithin(event);
+
+            if (item != null) {
+                resizeState = this.mouseGetItemResizeMode(event, item);
+
+                if (resizeState == 1) {
+                    this.canvas.style.cursor = 'ew-resize';
+                }
+                else if (resizeState == 2) {
+                    this.canvas.style.cursor = 'ns-resize';
+                }
+                else {
+                    this.canvas.style.cursor = 'move';
+                }
+            }
+            else {
+                this.canvas.style.cursor = 'default';
             }
         }
     },
@@ -307,9 +335,7 @@ var Canvas = {
 
             var item = this.items[itemIndex];
 
-            var caption = "Section " + itemIndex;
-
-            Drawer.drawText(this.getContext(), caption, item.x, item.y);
+            Drawer.drawText(this.getContext(), item.name, item.x, item.y - 2);
 
             Drawer.drawRectangle(this.getContext(), item.x, item.y, item.w, item.h);
         }
@@ -323,6 +349,20 @@ var Canvas = {
         this.drawSections();
     },
 
+    mouseGetObjectWithin: function(event) {
+        for (var itemIndex = 0; itemIndex < this.items.length; itemIndex++) {
+            var item = this.items[itemIndex];
+
+            if (this.mouseIsWithinSection(event, item)) {
+                console.log('MOUSE DOWN INSIDE SECTION');
+
+                return item;
+            }
+        }
+
+        return null;
+    },
+
     mouseIsWithinSection: function(event, item) {
         var mouse = this.getPosition(event);
 
@@ -332,6 +372,20 @@ var Canvas = {
         }
 
         return false;
+    },
+
+    mouseGetItemResizeMode: function(event, item) {
+        var mouse = this.getPosition(event);
+
+        if (mouse.x >= (item.x + item.w - 1) && mouse.x <= (item.x + item.w)) {
+            return 1;
+        }
+
+        if (mouse.y >= (item.y + item.h - 1) && mouse.y <= (item.y + item.h)) {
+            return 2;
+        }
+
+        return 0;
     },
 
     resetItemSelection: function() {
@@ -351,7 +405,7 @@ Canvas.setElementId('canvas');
 
 Canvas.init();
 
-Canvas.addSection({x: 50, y: 50, w: 300, h: 200});
-Canvas.addSection({x: 50, y: 300, w: 300, h: 200});
+Canvas.addSection({name: 'Section 01', x: 50, y: 50, w: 300, h: 200});
+Canvas.addSection({name: 'Section 02', x: 50, y: 300, w: 300, h: 200});
 
 </script>
