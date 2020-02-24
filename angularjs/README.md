@@ -1,5 +1,13 @@
+# Web samples
+
+## AngularJS framework sample
+
 To run the application:
 
-npm install http-server -g
+Install HTTP server:
 
-http-server .
+    npm install http-server -g
+
+Run HTTP server in current directory:
+
+    http-server .

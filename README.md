@@ -2,9 +2,9 @@
 
 Sample code for web applications.
 
-http://www.olivum.com.br/?page=lab/web
-
 **Standard**
+
+See some sample running in http://www.olivum.com.br/?page=lab/web
 
 * [canvas drawing](standard/canvas/canvas-drawing.html)
 * [canvas image data](standard/canvas/canvas-imagedata.html)
@@ -25,4 +25,5 @@ http://www.olivum.com.br/?page=lab/web
 
 **Frameworks**
 
-* [angularjs](./angularjs/)
+* [angular sample](./angularjs/)
+* [angularjs sample](./angularjs/)
