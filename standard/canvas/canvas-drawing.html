@@ -376,8 +376,8 @@ var Canvas = {
     mouseIsWithinSection: function(event, item) {
         var mouse = this.getPosition(event);
 
-        if (mouse.x >= item.x && mouse.x <= (item.x + item.w) &&
-            mouse.y >= item.y && mouse.y <= (item.y + item.h)) {
+        if (mouse.x >= item.x && mouse.x <= (item.x + item.w + 1) &&
+            mouse.y >= item.y && mouse.y <= (item.y + item.h + 1)) {
             return true;
         }
 
