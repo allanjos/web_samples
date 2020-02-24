@@ -25,5 +25,5 @@ See some sample running in http://www.olivum.com.br/?page=lab/web
 
 **Frameworks**
 
-* [angular sample](./angularjs/)
+* [angular sample](./angular/)
 * [angularjs sample](./angularjs/)
