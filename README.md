@@ -4,7 +4,7 @@ Sample code for web applications.
 
 **Standard**
 
-See some sample running in http://www.olivum.com.br/?page=lab/web
+See some samples running in http://www.olivum.com.br/?page=lab/web
 
 * [canvas drawing](standard/canvas/canvas-drawing.html)
 * [canvas image data](standard/canvas/canvas-imagedata.html)
