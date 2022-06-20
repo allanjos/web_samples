@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <input type="file" accept="audio/*" capture id="recorder" />
+    </body>
+
+    <audio id="player" controls></audio>
+
+    <script>
+        async function getMedia(constraints) {
+            console.log(`getMedia(${constraints})`);
+
+            let stream = null;
+
+            try {
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+
+                console.log('getUserMedia() Ok');
+            } catch (err) {
+                console.error('getUserMedia error');
+
+                console.error('getUserMedia() error: ', err);
+            }
+        }
+
+        async function enumerateDevices() {
+            console.log('enumerateDevices()');
+
+            if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+                console.log("enumerateDevices() not supported.");
+                return;
+            }
+
+            // List cameras and microphones.
+
+            navigator.mediaDevices.enumerateDevices()
+                .then(function(devices) {
+                    devices.forEach(function(device) {
+                        console.log(device.kind + ": " + device.label +
+                            " id = " + device.deviceId);
+                    });
+                })
+                .catch(function(err) {
+                    console.log(err.name + ": " + err.message);
+                });
+        }
+
+        enumerateDevices();
+
+        getMedia({
+            audio: true
+        });
+    </script>
+
+</html>

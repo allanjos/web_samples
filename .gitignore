@@ -82,7 +82,7 @@ typings/
 # General
 
 old/
-.DS_STORE
+.DS_Store
 
 dist/
 bazel-*
