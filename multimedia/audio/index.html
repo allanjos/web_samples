@@ -1,55 +1,19 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title>Web dictaphone</title>
+        <!-- link href="styles/app.css" rel="stylesheet" type="text/css" -->
+    </head>
     <body>
-        <input type="file" accept="audio/*" capture id="recorder" />
+        <button id="recordButton">Record</button>
+        <button id="stopButton">Stop</button>
+        <button id="playerButton">Play</button>
+
+        <input type="file" accept="audio/*" capture id="recorder" style="visibility: hidden" />
+        <audio id="player" controls style="visibility: hidden"></audio>
+
+        <script src="index.js"></script>
     </body>
-
-    <audio id="player" controls></audio>
-
-    <script>
-        async function getMedia(constraints) {
-            console.log(`getMedia(${constraints})`);
-
-            let stream = null;
-
-            try {
-                stream = await navigator.mediaDevices.getUserMedia(constraints);
-
-                console.log('getUserMedia() Ok');
-            } catch (err) {
-                console.error('getUserMedia error');
-
-                console.error('getUserMedia() error: ', err);
-            }
-        }
-
-        async function enumerateDevices() {
-            console.log('enumerateDevices()');
-
-            if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-                console.log("enumerateDevices() not supported.");
-                return;
-            }
-
-            // List cameras and microphones.
-
-            navigator.mediaDevices.enumerateDevices()
-                .then(function(devices) {
-                    devices.forEach(function(device) {
-                        console.log(device.kind + ": " + device.label +
-                            " id = " + device.deviceId);
-                    });
-                })
-                .catch(function(err) {
-                    console.log(err.name + ": " + err.message);
-                });
-        }
-
-        enumerateDevices();
-
-        getMedia({
-            audio: true
-        });
-    </script>
-
 </html>
